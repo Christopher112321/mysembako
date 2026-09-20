@@ -1,0 +1,193 @@
+@import "tailwindcss";
+@import "./font.css";
+
+@source "../**/*.{js,jsx,ts,tsx}";
+@source "../../../views/**/*.blade.php";
+
+@theme {
+  --font-inter: "Inter", "sans-serif";
+  --font-barlow: "Barlow", "sans-serif";
+  --font-barlow-condensed: "Barlow Condensed", "sans-serif";
+  --font-roboto: "Roboto";
+  --font-poppins: "Poppins", "sans-serif";
+  --bg-primary-cray: #FFFDF6;
+  --bg-secondary-cray: #E6E6E6;
+  --bg-tertiary-cray: #999999;
+  --bg-gray: #2F2F2F;
+  --text-color-white: #ffffff;
+  --text-color-black: #0a0907;
+  --text-color-grey: #b5b2b6;
+  --text-color-blue: #180C4D;
+  --my-width-nav: calc(100% - 32px);
+}
+
+/* Root Setup for Online Shop: background putih, font poppins, padding dan margin disesuaikan */
+#root, html, body {
+  font-family: var(--font-poppins), Arial, Helvetica, sans-serif;
+  color: var(--text-color-black);
+  background-color: #fff;
+  padding: 0;
+  margin: 0;
+  max-width: 100vw;
+  width: 100%;
+  min-height: 100vh;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+/* Utility classes for padding/margin spacing commonly needed di web online shop */
+.container-main {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+.section {
+  margin-bottom: 40px;
+}
+
+.line-clamp-3 {
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar on hover for mobile tabs */
+.scrollbar-hide-hover {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide-hover::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide-hover:hover {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide-hover:hover::-webkit-scrollbar {
+  display: none;
+}
+/* Lenis smooth scroll fixes */
+html.lenis {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+/* Ensure scroll works even if Lenis fails */
+body {
+  overflow-y: auto !important;
+  scroll-behavior: smooth;
+  font-family: var(--font-poppins), Arial, Helvetica, sans-serif;
+  background-color: #fff;
+  margin: 0;
+  padding: 0;
+}
+.no-smooth-scroll {
+  scroll-behavior: auto !important;
+}
+/* Scroll to Top Button Animations */
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.animate-in {
+  animation: slideInFromBottom 0.3s ease-out;
+}
+.slide-in-from-bottom-2 {
+  animation: slideInFromBottom 0.3s ease-out;
+}
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Extra adjustments for margins & paddings for elements commonly used in online shop */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-poppins), Arial, Helvetica, sans-serif;
+  margin: 0 0 15px 0;
+  font-weight: 600;
+}
+p {
+  margin: 0 0 13px 0;
+  font-size: 1rem;
+}
+
+.btn, .button {
+  display: inline-block;
+  padding: 12px 28px;
+  background: #ff7043;
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  font-family: var(--font-poppins), Arial, Helvetica, sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.16s;
+  cursor: pointer;
+  margin: 5px 0;
+  text-align: center;
+  text-decoration: none;
+}
+.btn:hover, .button:hover {
+  background: #ff5118;
+}
+
+input, select, textarea {
+  font-family: var(--font-poppins), Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  padding: 13px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fcfcfc;
+  box-sizing: border-box;
+  margin-bottom: 14px;
+  outline: none;
+  transition: border 0.18s;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: #ff7043;
+}
+
+a {
+  color: #1976d2;
+  text-decoration: none;
+  transition: color 0.18s;
+}
+a:hover {
+  color: #0c51a0;
+}
+
+ 

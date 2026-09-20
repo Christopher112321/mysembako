@@ -1,0 +1,17 @@
+@import 'tailwindcss';
+
+/* 
+ * The @source and @theme directives are not valid in standard CSS or Tailwind usage.
+ * If you want to specify custom fonts and Tailwind configuration, 
+ * use @layer and extend in your Tailwind config or write custom CSS below.
+ */
+
+:root {
+  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Example applying custom font to body */
+body {
+  font-family: var(--font-sans);
+}
