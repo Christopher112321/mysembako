@@ -254,42 +254,42 @@ function CartPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#fff6f2] flex flex-col">
+    <div className="min-h-screen bg-[#FAF7F2] flex flex-col">
       <TopNavbar />
-      <main className="flex flex-1 flex-col md:flex-row gap-6 w-full max-w-6xl mx-auto mt-8 md:mt-14 px-2 md:px-6">
+      <main className="flex flex-1 flex-col md:flex-row gap-6 w-full max-w-6xl mx-auto mt-6 md:mt-10 px-3 md:px-6 pb-28">
         {/* List Kiri */}
-        <div className="flex-1 flex flex-col items-stretch px-0 md:px-4 py-4 max-w-[700px] mx-auto md:mx-0">
-          <div className="bg-[#fff] rounded-2xl shadow-lg p-3 md:p-6 mb-4 w-full border border-[#ffe1c1]">
+        <div className="flex-1 flex flex-col items-stretch px-0 md:px-2 py-2 max-w-[700px] mx-auto md:mx-0 w-full">
+          <div className="bg-white rounded-2xl shadow-sm p-4 md:p-6 mb-4 w-full border border-[#FBE3D4]">
             {/* Pilih Semua */}
-            <div className="flex items-center mb-5">
+            <div className="flex items-center mb-5 pb-3 border-b border-gray-100">
               <SelectAllCheckbox
                 checked={checked.every(Boolean) && checked.length > 0}
                 onChange={handleCheckAll}
               />
-              <span className="ml-1 font-semibold text-[#934f19] text-lg select-none">
+              <span className="ml-2 font-bold text-gray-800 text-base md:text-lg select-none">
                 Pilih Semua
-                <span className="ml-2 text-[#fc8726] font-bold">
+                <span className="ml-2 text-[#FE5A19] font-bold">
                   ({checked.filter(Boolean).length})
                 </span>
               </span>
             </div>
             {/* Daftar Keranjang */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
               {loading ? (
-                <div className="text-center text-[#c0b2a2] py-12 text-lg font-semibold">
+                <div className="text-center text-gray-400 py-12 text-base font-medium">
                   Memuat keranjang...
                 </div>
               ) : cart.length === 0 ? (
-                <div className="text-center text-[#c0b2a2] py-12 text-lg font-semibold">
+                <div className="text-center text-gray-400 py-12 text-base font-medium">
                   Keranjang belanja kosong.
                 </div>
               ) : (
                 cart.map((item, i) => (
                   <div
                     key={item.id}
-                    className="flex items-start bg-white rounded-lg shadow-sm border border-[#f9e6d8] px-3 md:px-5 py-3 hover:bg-[#fff8f4] group transition"
+                    className="flex items-start bg-white rounded-xl shadow-sm border border-[#F5EBE1] px-3 md:px-5 py-3.5 hover:border-orange-200 transition-all duration-200"
                   >
-                    {/* Checkbox (custom centang putih dan kotak orange) */}
+                    {/* Checkbox */}
                     <span className="relative flex-shrink-0 mt-2">
                       <CustomCheckbox
                         checked={checked[i] || false}
@@ -300,59 +300,47 @@ function CartPage() {
                     <img
                       src={item.img}
                       alt={item.name}
-                      className="w-[62px] h-[62px] object-contain rounded-lg bg-white ring-2 ring-[#ffe5d2] flex-shrink-0 ml-4 shadow-md"
+                      className="w-16 h-16 object-cover rounded-xl bg-orange-50/50 border border-orange-100/60 flex-shrink-0 ml-3.5 shadow-sm"
                     />
                     {/* Info Produk */}
-                    <div className="min-w-0 flex-1 ml-4">
-                      <div className="font-bold text-[#c96e33] text-lg mb-0.5 truncate max-w-[220px]">
+                    <div className="min-w-0 flex-1 ml-3.5">
+                      <div className="font-bold text-gray-900 text-sm md:text-base mb-0.5 truncate">
                         {item.name}
                       </div>
                       {(item.desc || item.description) && (
-                        <div className="text-xs text-[#b68552] font-medium">{item.desc || item.description}</div>
+                        <div className="text-xs text-gray-500 font-medium line-clamp-1">{item.desc || item.description}</div>
                       )}
-                      <div className="flex items-center mt-2 gap-4">
-                        <span className="font-bold text-[#e16b27] text-base whitespace-nowrap">
+                      <div className="flex items-center mt-2">
+                        <span className="font-extrabold text-[#FE5A19] text-sm md:text-base whitespace-nowrap">
                           Rp {item.price.toLocaleString("id-ID")}
                         </span>
                       </div>
                     </div>
                     {/* Kanan: Qty & hapus */}
-                    <div className="flex flex-col items-end min-w-[120px] ml-4 gap-3 mt-1">
-                      <div className="flex items-center bg-[#fff4e8] rounded-lg px-2 py-1 space-x-2 border border-[#ffe5d2]">
+                    <div className="flex flex-col items-end min-w-[100px] ml-3 gap-2">
+                      <div className="flex items-center bg-[#FFF8F3] rounded-lg px-2 py-0.5 space-x-2 border border-[#FBE3D4]">
                         <button
-                          className="text-[#fc8726] flex items-center justify-center w-7 h-7 font-bold text-lg rounded-full transition hover:bg-[#ffe5d2] disabled:opacity-40"
+                          className="text-[#FE5A19] flex items-center justify-center w-7 h-7 font-bold text-base rounded-md hover:bg-orange-100 transition disabled:opacity-30"
                           aria-label="Kurangi jumlah"
                           onClick={() => handleQty(i, -1)}
                           disabled={item.quantity <= 1}
-                          style={{
-                            border: "none",
-                            background: "none",
-                            outline: "none",
-                          }}
-                          tabIndex={0}
                         >
                           –
                         </button>
-                        <span className="text-[#e16b27] text-base font-extrabold w-7 text-center select-none">
+                        <span className="text-[#FE5A19] text-sm md:text-base font-bold w-6 text-center select-none">
                           {item.quantity}
                         </span>
                         <button
-                          className="text-[#fc8726] flex items-center justify-center w-7 h-7 font-bold text-lg rounded-full transition hover:bg-[#ffe5d2]"
+                          className="text-[#FE5A19] flex items-center justify-center w-7 h-7 font-bold text-base rounded-md hover:bg-orange-100 transition"
                           aria-label="Tambah jumlah"
                           onClick={() => handleQty(i, 1)}
-                          style={{
-                            border: "none",
-                            background: "none",
-                            outline: "none",
-                          }}
-                          tabIndex={0}
                         >
                           +
                         </button>
                       </div>
                       <button
                         onClick={() => handleRemove(i)}
-                        className="mt-1 text-[#e06f6a] text-xs font-bold px-2 py-[3px] rounded-md bg-[#fff4f6] hover:bg-[#ffebef] border border-[#ffe1e6] shadow-sm transition hidden group-hover:inline-block"
+                        className="text-xs font-semibold text-rose-500 hover:text-rose-700 py-0.5 px-2 rounded hover:bg-rose-50 transition"
                         title="Hapus dari keranjang"
                       >
                         Hapus
@@ -365,28 +353,28 @@ function CartPage() {
           </div>
         </div>
         {/* Ringkasan Belanja */}
-        <aside className="w-full md:w-[350px] flex-shrink-0 px-0 md:px-0 mt-0 md:mt-4">
-          <div className="bg-[#fff] rounded-2xl shadow-lg p-6 mx-auto max-w-xs sticky top-7 md:top-10 border border-[#ffe1c1]">
-            <div className="flex justify-between items-center mb-4">
-              <span className="font-extrabold text-[#964e0e] text-lg">
+        <aside className="w-full md:w-[350px] flex-shrink-0 px-0 md:px-0">
+          <div className="bg-white rounded-2xl shadow-sm p-6 mx-auto max-w-sm sticky top-20 border border-[#FBE3D4]">
+            <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
+              <span className="font-bold text-gray-900 text-base md:text-lg">
                 Ringkasan Belanja
               </span>
-              <span className="font-semibold text-[#c97d2b] text-base">
+              <span className="font-semibold text-gray-500 text-sm">
                 Total
               </span>
             </div>
-            <div className="flex justify-between items-baseline mb-4">
-              <span className="text-[#C96E33] font-bold text-base">Total:</span>
-              <span className="font-bold text-[#e16b27] text-xl">
+            <div className="flex justify-between items-baseline mb-5">
+              <span className="text-gray-700 font-semibold text-sm">Total:</span>
+              <span className="font-extrabold text-[#FE5A19] text-xl">
                 Rp {total.toLocaleString("id-ID")}
               </span>
             </div>
             <button
-              className={`w-full mb-4 py-2.5 rounded-xl font-semibold text-base shadow-sm transition
+              className={`w-full mb-4 py-3 rounded-xl font-bold text-sm shadow-md transition active:scale-[0.98]
               ${
                 checked.some(Boolean)
-                  ? "bg-[#fc8726] hover:bg-[#fff2ea] text-white"
-                  : "bg-[#e7aa74] text-white cursor-not-allowed"
+                  ? "bg-[#FE5A19] hover:bg-[#E04B0E] text-white shadow-orange-500/20"
+                  : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"
               }`}
               onClick={handleCheckout}
               disabled={!checked.some(Boolean)}
@@ -396,20 +384,19 @@ function CartPage() {
                 ? ` (${checked.filter(Boolean).length})`
                 : ""}
             </button>
-            <div className="flex items-center justify-center gap-2 bg-[#fff7ee] text-[#fc8726] text-xs font-semibold rounded-lg px-3 py-2 border border-[#f9e6d8]">
+            <div className="flex items-center justify-center gap-2 bg-[#FFF8F3] text-orange-600 text-xs font-semibold rounded-lg px-3 py-2 border border-[#FBE3D4]">
               <svg
-                width="18"
-                height="18"
+                width="16"
+                height="16"
                 fill="none"
                 viewBox="0 0 20 20"
-                className="inline"
-                style={{ marginRight: 4 }}
+                className="inline flex-shrink-0"
               >
                 <circle
                   cx="10"
                   cy="10"
                   r="8"
-                  stroke="#fc8726"
+                  stroke="#FE5A19"
                   strokeWidth="1.4"
                   fill="none"
                 ></circle>
@@ -419,7 +406,7 @@ function CartPage() {
                   width="2"
                   height="6"
                   rx="1"
-                  fill="#fc8726"
+                  fill="#FE5A19"
                 />
                 <rect
                   x="9"
@@ -427,10 +414,10 @@ function CartPage() {
                   width="2"
                   height="2"
                   rx="1"
-                  fill="#fc8726"
+                  fill="#FE5A19"
                 />
               </svg>
-              Tidak ada promo yang berlaku.
+              <span>Tidak ada promo yang berlaku.</span>
             </div>
           </div>
         </aside>

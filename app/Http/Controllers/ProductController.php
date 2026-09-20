@@ -286,7 +286,8 @@ class ProductController extends Controller
                 ];
             });
 
-        return response()->json($products);
+        return response()->json($products)
+            ->header('Cache-Control', 'public, max-age=60, s-maxage=180, stale-while-revalidate=600');
     }
 
     /**
@@ -301,6 +302,7 @@ class ProductController extends Controller
             ];
         });
 
-        return response()->json($categories);
+        return response()->json($categories)
+            ->header('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=1200');
     }
 }

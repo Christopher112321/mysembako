@@ -31,11 +31,11 @@ const BottomNavbar = () => {
 
   return (
     <div
-      className="bottom-nav fixed left-1/2 -translate-x-1/2 bottom-4 w-[420px] max-w-[94vw] z-[999] bg-orange-100 rounded-full pt-[14px] pb-[14px] flex justify-center items-center gap-9 shadow-[0_-2px_10px_0_rgba(0,0,0,0.08)] transition-all duration-300"
+      className="bottom-nav fixed left-1/2 -translate-x-1/2 bottom-5 w-[380px] max-w-[92vw] z-[999] bg-white/90 backdrop-blur-xl border border-orange-200/70 rounded-full py-2 px-5 flex justify-between items-center shadow-[0_10px_30px_rgba(254,90,25,0.12)] transition-all duration-300"
     >
       {/* Home Button */}
       <button
-        className={`nav-button flex items-center justify-center cursor-pointer px-3 py-2 rounded-xl transition-all duration-300 ${activeTab === 'home' ? "bg-orange-100/60" : "bg-transparent"}`}
+        className={`nav-button flex items-center justify-center cursor-pointer p-2.5 rounded-full transition-all duration-200 hover:scale-110 active:scale-95 ${activeTab === 'home' ? "bg-orange-500/10 shadow-sm" : "bg-transparent hover:bg-orange-50/50"}`}
         onClick={handleHomeClick}
       >
         <img
@@ -47,7 +47,7 @@ const BottomNavbar = () => {
 
       {/* Shopping Cart Button */}
       <button
-        className={`nav-button flex items-center justify-center cursor-pointer px-3 py-2 rounded-xl transition-all duration-300 ${activeTab === 'cart' ? "bg-orange-100/60" : "bg-transparent"}`}
+        className={`nav-button flex items-center justify-center cursor-pointer p-2.5 rounded-full transition-all duration-200 hover:scale-110 active:scale-95 ${activeTab === 'cart' ? "bg-orange-500/10 shadow-sm" : "bg-transparent hover:bg-orange-50/50"}`}
         onClick={handleCartClick}
       >
         <img
@@ -59,7 +59,7 @@ const BottomNavbar = () => {
 
       {/* Orders Button */}
       <button
-        className={`nav-button flex items-center justify-center cursor-pointer px-3 py-2 rounded-xl transition-all duration-300 ${activeTab === 'receipt' ? "bg-orange-100/60" : "bg-transparent"}`}
+        className={`nav-button flex items-center justify-center cursor-pointer p-2.5 rounded-full transition-all duration-200 hover:scale-110 active:scale-95 ${activeTab === 'receipt' ? "bg-orange-500/10 shadow-sm" : "bg-transparent hover:bg-orange-50/50"}`}
         onClick={handleReceiptClick}
       >
         <img
@@ -71,7 +71,7 @@ const BottomNavbar = () => {
 
       {/* Location Button */}
       <button
-        className={`nav-button flex items-center justify-center cursor-pointer px-3 py-2 rounded-xl transition-all duration-300 ${activeTab === 'location' ? "bg-orange-100/60" : "bg-transparent"}`}
+        className={`nav-button flex items-center justify-center cursor-pointer p-2.5 rounded-full transition-all duration-200 hover:scale-110 active:scale-95 ${activeTab === 'location' ? "bg-orange-500/10 shadow-sm" : "bg-transparent hover:bg-orange-50/50"}`}
         onClick={handleLocationClick}
       >
         <img
