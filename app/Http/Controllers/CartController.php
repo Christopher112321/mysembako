@@ -26,15 +26,7 @@ class CartController extends Controller
             ->map(function ($cartItem) {
                 $product = $cartItem->product;
                 
-                // Format gambar - prioritaskan ProductImage, jika tidak ada gunakan image dari product
-                $imageUrl = null;
-                if ($product->images && $product->images->count() > 0) {
-                    $imageUrl = asset('storage/' . $product->images->first()->image_path);
-                } elseif ($product->image) {
-                    $imageUrl = asset('storage/' . $product->image);
-                } else {
-                    $imageUrl = 'https://via.placeholder.com/150?text=No+Image';
-                }
+                $imageUrl = ProductController::resolveImageUrl($product);
 
                 return [
                     'id' => $cartItem->id,

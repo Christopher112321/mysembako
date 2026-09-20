@@ -33,5 +33,9 @@ $_SERVER['HTTPS'] = 'on';
 $_SERVER['SERVER_PORT'] = 443;
 $_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https';
 
+// Normalize script name so Laravel does not treat /api as baseUrl
+$_SERVER['SCRIPT_NAME'] = '/index.php';
+$_SERVER['PHP_SELF'] = '/index.php';
+
 // Forward request to standard Laravel public/index.php
 require __DIR__ . '/../public/index.php';

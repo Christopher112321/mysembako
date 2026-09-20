@@ -210,6 +210,58 @@ class ProductController extends Controller
     }
 
     /**
+     * Resolves realistic, high-quality images for products
+     */
+    public static function resolveImageUrl($product): string
+    {
+        if (!empty($product->image)) {
+            if (str_starts_with($product->image, 'http://') || str_starts_with($product->image, 'https://')) {
+                return $product->image;
+            }
+            return asset('storage/' . $product->image);
+        }
+
+        $name = strtolower($product->name ?? '');
+        $cat = strtolower($product->category->name ?? '');
+
+        if (str_contains($name, 'beras') || str_contains($cat, 'beras')) {
+            return 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80';
+        }
+        if (str_contains($name, 'minyak') || str_contains($cat, 'minyak')) {
+            return 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=80';
+        }
+        if (str_contains($name, 'gula') || str_contains($cat, 'gula')) {
+            return 'https://images.unsplash.com/photo-1581441363689-1f3c3c414635?auto=format&fit=crop&w=600&q=80';
+        }
+        if (str_contains($name, 'telur') || str_contains($cat, 'telur')) {
+            return 'https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?auto=format&fit=crop&w=600&q=80';
+        }
+        if (str_contains($name, 'bumbu') || str_contains($cat, 'bumbu')) {
+            return 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=600&q=80';
+        }
+        if (str_contains($name, 'mie') || str_contains($name, 'indomie') || str_contains($cat, 'mie')) {
+            return 'https://images.unsplash.com/photo-1612927601601-6638404737ce?auto=format&fit=crop&w=600&q=80';
+        }
+        if (str_contains($name, 'kopi') || str_contains($name, 'teh') || str_contains($cat, 'kopi')) {
+            return 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80';
+        }
+        if (str_contains($name, 'susu') || str_contains($cat, 'susu')) {
+            return 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80';
+        }
+        if (str_contains($name, 'air') || str_contains($name, 'galon') || str_contains($cat, 'air')) {
+            return 'https://images.unsplash.com/photo-1548839140-29a749e1bc4e?auto=format&fit=crop&w=600&q=80';
+        }
+        if (str_contains($name, 'gas') || str_contains($cat, 'gas')) {
+            return 'https://images.unsplash.com/photo-1585670149967-b4f4da88cc9f?auto=format&fit=crop&w=600&q=80';
+        }
+        if (str_contains($name, 'snack') || str_contains($cat, 'snack')) {
+            return 'https://images.unsplash.com/photo-1621996346565-e3d5d6281290?auto=format&fit=crop&w=600&q=80';
+        }
+
+        return 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80';
+    }
+
+    /**
      * API endpoint untuk mendapatkan semua produk aktif (untuk homepage)
      */
     public function apiIndex()
@@ -220,17 +272,13 @@ class ProductController extends Controller
             ->with(['owner', 'category'])
             ->get()
             ->map(function ($product) {
-                // Format gambar - jika ada image, gunakan full URL, jika tidak gunakan placeholder
-                $imageUrl = $product->image 
-                    ? asset('storage/' . $product->image) 
-                    : 'https://via.placeholder.com/150?text=No+Image';
-                
                 return [
                     'id' => $product->id,
                     'name' => $product->name,
-                    'price' => (int) $product->price, // Pastikan price adalah number
-                    'img' => $imageUrl,
-                    'store' => $product->owner->name ?? 'Unknown Store',
+                    'price' => (int) $product->price,
+                    'img' => self::resolveImageUrl($product),
+                    'store' => $product->owner->name ?? 'Toko Sembako',
+                    'store_location' => $product->owner->location ?? 'Indonesia',
                     'description' => $product->description ?? '',
                     'stock' => $product->stock,
                     'category' => $product->category->name ?? null,

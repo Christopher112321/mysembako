@@ -2,10 +2,6 @@ import React, { useState, useEffect } from "react";
 import TopNavbar from "../../components/commons/molecules/TopNavbar";
 import BottomNavbar from "../../components/commons/molecules/BottomNavbar";
 
-// const PRIMARY_COLOR = "#BF4413";
-// const SECONDARY_COLOR = "#FFCCB8";
-// const BACKGROUND_COLOR = "#FFE6DD";
-
 const DEFAULT_CATEGORIES = [
   "Beras",
   "Minyak Goreng",
@@ -20,10 +16,24 @@ const DEFAULT_CATEGORIES = [
   "Snack & Cemilan",
 ];
 
+const CATEGORY_EMOJIS = {
+  "Beras": "🌾",
+  "Minyak Goreng": "🛢️",
+  "Gula Pasir": "🧂",
+  "Telur": "🥚",
+  "Bumbu Dapur": "🌶️",
+  "Mie & Pasta": "🍜",
+  "Kopi & Teh": "☕",
+  "Susu & Olahan": "🥛",
+  "Air Minum / Galon": "💧",
+  "Gas LPG": "🔥",
+  "Snack & Cemilan": "🍪",
+};
+
 function HomePage() {
-  // State produk list diambil dari database (API)
   const [productsList, setProductsList] = useState([]);
-  const [allProducts, setAllProducts] = useState([]); // Simpan semua produk untuk filtering
+  const [allProducts, setAllProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryOptions, setCategoryOptions] = useState(DEFAULT_CATEGORIES);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -31,39 +41,49 @@ function HomePage() {
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [addingToCart, setAddingToCart] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
-  // Fetch produk dari "database" saat komponen dimount
-  useEffect(() => {
-    // Contoh fetch ke API database produk
-    // Ganti URL sesuai endpoint yang digunakan
-    const fetchProducts = async () => {
-      try {
-        // Misal API produk di /api/products (Anda sesuaikan sendiri)
-        const response = await fetch("/api/products");
-        if (!response.ok) {
-          throw new Error("Gagal memuat produk dari database");
-        }
-        const data = await response.json();
-        setAllProducts(data); // Simpan semua produk
-        setProductsList(data); // Set initial products
-      } catch (error) {
-        console.error("Error fetch produk:", error);
-        // Fallback jika fetch gagal (bisa kasih pesan atau data dummy)
-        setAllProducts([]);
-        setProductsList([]);
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(""), 3000);
+  };
+
+  // Fetch produk dari API
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/products", {
+        headers: { Accept: "application/json" },
+      });
+      if (!response.ok) {
+        throw new Error("Gagal memuat produk");
       }
-    };
+      const data = await response.json();
+      const list = Array.isArray(data) ? data : [];
+      setAllProducts(list);
+      setProductsList(list);
+    } catch (error) {
+      console.error("Error fetch produk:", error);
+      setAllProducts([]);
+      setProductsList([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchProducts();
   }, []);
 
-  // Fetch kategori dari API (gabungkan dengan kategori default)
+  // Fetch kategori dari API
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("/api/categories");
-        if (!res.ok) {
-          throw new Error("Gagal memuat kategori");
-        }
+        const res = await fetch("/api/categories", {
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) return;
         const data = await res.json();
         const names = Array.from(
           new Set([
@@ -74,25 +94,24 @@ function HomePage() {
         setCategoryOptions(names);
       } catch (error) {
         console.error("Error fetch kategori:", error);
-        setCategoryOptions(DEFAULT_CATEGORIES);
       }
     };
     fetchCategories();
   }, []);
 
-  // Filter produk berdasarkan search query
+  // Filter produk berdasarkan search & kategori
   useEffect(() => {
     const query = searchQuery.toLowerCase().trim();
     const categoryFilter = selectedCategory.toLowerCase().trim();
     const categorySearch = categoryQuery.toLowerCase().trim();
+
     if (!query && !categoryFilter && !categorySearch) {
-      // Jika tidak ada filter, tampilkan semua produk
       setProductsList(allProducts);
       return;
     }
 
     const filtered = allProducts.filter((product) => {
-      const nameMatch = product.name?.toLowerCase().includes(query);
+      const nameMatch = (product.name || "").toLowerCase().includes(query);
       const descMatch = (product.description || product.desc || "")
         .toLowerCase()
         .includes(query);
@@ -104,7 +123,7 @@ function HomePage() {
       const customCategoryMatch = categorySearch
         ? categoryText.includes(categorySearch)
         : true;
-      
+
       const baseMatch = query ? nameMatch || descMatch || storeMatch : true;
       return baseMatch && selectedMatch && customCategoryMatch;
     });
@@ -112,30 +131,22 @@ function HomePage() {
     setProductsList(filtered);
   }, [searchQuery, allProducts, selectedCategory, categoryQuery]);
 
-  // Helper functions for price parsing/formatting
   const parsePrice = (priceStr) => {
     return Number(
-      // Mendukung string harga "Rp 99.999" atau hanya int: 99999
       typeof priceStr === "number"
         ? priceStr
-        : priceStr.replace(/Rp\s?|\./g, "").trim()
+        : String(priceStr).replace(/Rp\s?|\./g, "").trim()
     );
   };
 
-  // Karena harga bisa dari DB berupa number, support format rupiah
   const formatRupiah = (number) => {
     if (typeof number !== "number") number = Number(number) || 0;
-    return (
-      "Rp " +
-      number
-        .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-    );
+    return "Rp " + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
   const openModal = (product) => {
     setSelectedProduct(product);
-    setQuantity(1); // Reset saat buka modal baru
+    setQuantity(1);
     setShowModal(true);
   };
 
@@ -145,11 +156,11 @@ function HomePage() {
     setQuantity(1);
   };
 
-  const addToCart = async (product) => {
+  const addToCart = async (product, qty = 1) => {
     try {
-      // Get CSRF token from meta tag
+      setAddingToCart(true);
       const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-      
+
       const response = await fetch('/api/cart', {
         method: 'POST',
         headers: {
@@ -160,9 +171,14 @@ function HomePage() {
         credentials: 'same-origin',
         body: JSON.stringify({
           product_id: product.id,
-          quantity: quantity,
+          quantity: qty,
         }),
       });
+
+      if (response.status === 401) {
+        window.location.href = '/login';
+        return;
+      }
 
       const data = await response.json();
 
@@ -171,226 +187,325 @@ function HomePage() {
         return;
       }
 
-      // Success - close modal and show notification
-      alert('Produk berhasil ditambahkan ke keranjang!');
+      showToast(`✓ ${product.name} berhasil ditambahkan ke keranjang!`);
       closeModal();
     } catch (error) {
       console.error('Error adding to cart:', error);
       alert('Terjadi kesalahan saat menambahkan produk ke keranjang');
+    } finally {
+      setAddingToCart(false);
     }
   };
 
-  const handleQuantityChange = (e) => {
-    let val = parseInt(e.target.value, 10) || 1;
-    if (val < 1) val = 1;
-    if (val > selectedProduct.stock) val = selectedProduct.stock;
-    setQuantity(val);
-  };
-
-  const incQty = () => {
-    if (quantity < selectedProduct.stock) setQuantity(quantity + 1);
-  };
-
-  const decQty = () => {
-    if (quantity > 1) setQuantity(quantity - 1);
-  };
-
-  let dynamicTotalPrice = selectedProduct
-    ? formatRupiah(parsePrice(selectedProduct.price) * quantity)
-    : "";
-
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-[#FAF9F6] min-h-screen text-slate-800">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-emerald-600 text-white px-5 py-3 rounded-full shadow-2xl font-medium text-sm flex items-center gap-2 animate-bounce">
+          {toastMessage}
+        </div>
+      )}
+
       {/* Top Navbar */}
-      <div className="">
-        <TopNavbar 
-          searchQuery={searchQuery}
-          onSearchChange={(e) => setSearchQuery(e.target.value)}
-          selectedCategory={selectedCategory}
-          categoryQuery={categoryQuery}
-          categoryOptions={categoryOptions}
-          onCategorySelect={(value) =>
-            setSelectedCategory((prev) => (prev === value ? "" : value))
-          }
-          onCategoryQueryChange={(value) => setCategoryQuery(value)}
-          onResetFilter={() => {
-            setSelectedCategory("");
-            setCategoryQuery("");
-            setSearchQuery("");
-            setProductsList(allProducts);
-          }}
-        />
-      </div>
-      {/* Filter Kategori */}
-      <div className="max-w-7xl mx-auto px-2 md:px-4 mt-4">
-        <div className="bg-orange-50 border border-orange-100 rounded-xl p-4 md:p-5 shadow-sm">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="text-sm md:text-base font-semibold text-gray-800">
-              Pilih kategori atau cari sendiri
+      <TopNavbar
+        searchQuery={searchQuery}
+        onSearchChange={(e) => setSearchQuery(e.target.value)}
+        selectedCategory={selectedCategory}
+        categoryQuery={categoryQuery}
+        categoryOptions={categoryOptions}
+        onCategorySelect={(value) =>
+          setSelectedCategory((prev) => (prev === value ? "" : value))
+        }
+        onCategoryQueryChange={(value) => setCategoryQuery(value)}
+        onResetFilter={() => {
+          setSelectedCategory("");
+          setCategoryQuery("");
+          setSearchQuery("");
+          setProductsList(allProducts);
+        }}
+      />
+
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 pt-3 pb-28">
+        {/* Modern Promotional Hero Banner */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white p-6 sm:p-8 shadow-lg shadow-orange-500/15 mb-6">
+          <div className="relative z-10 max-w-xl">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-md mb-3">
+              ✨ Belanja Sembako Tanpa Ribet
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight">
+              Kebutuhan Pokok Segar, Lengkap & Hemat Setiap Hari!
+            </h1>
+            <p className="mt-2 text-white/90 text-xs sm:text-sm leading-relaxed">
+              Langsung diantar dari toko kelontong terdekat di daerah Anda dengan harga grosir terbaik.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2 text-xs font-medium">
+              <span className="bg-black/15 px-3 py-1 rounded-full">🚀 Pengiriman Cepat</span>
+              <span className="bg-black/15 px-3 py-1 rounded-full">🌿 Kualitas Terjamin</span>
+              <span className="bg-black/15 px-3 py-1 rounded-full">🏷️ Diskon Langsung</span>
             </div>
+          </div>
+          {/* Decorative Circles */}
+          <div className="absolute -right-10 -bottom-10 w-48 h-48 sm:w-64 sm:h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+          <div className="absolute right-12 top-6 text-7xl sm:text-8xl opacity-30 select-none pointer-events-none hidden sm:block">
+            🛒
+          </div>
+        </div>
+
+        {/* Category Pills Slider */}
+        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-orange-100 shadow-sm mb-6">
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <h2 className="text-sm sm:text-base font-bold text-gray-900 flex items-center gap-2">
+              <span>🏷️</span> Kategori Pilihan
+            </h2>
+            {selectedCategory && (
+              <button
+                type="button"
+                onClick={() => setSelectedCategory("")}
+                className="text-xs font-semibold text-orange-600 hover:text-orange-700 underline"
+              >
+                Hapus Filter Kategori
+              </button>
+            )}
+          </div>
+
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-orange-200">
             <button
               type="button"
-              onClick={() => {
-                setSelectedCategory("");
-                setCategoryQuery("");
-                setProductsList(allProducts);
-              }}
-              className="text-sm font-semibold text-orange-600 hover:text-orange-700"
+              onClick={() => setSelectedCategory("")}
+              className={`flex-shrink-0 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 ${
+                selectedCategory === ""
+                  ? "bg-orange-500 text-white shadow-md shadow-orange-500/25 scale-105"
+                  : "bg-orange-50/60 text-gray-700 hover:bg-orange-100/70 border border-orange-100"
+              }`}
             >
-              Reset kategori
+              Semua Produk
             </button>
-          </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {categoryOptions.slice(0, 12).map((cat) => {
+            {categoryOptions.map((cat) => {
               const isActive = selectedCategory === cat;
+              const emoji = CATEGORY_EMOJIS[cat] || "📦";
               return (
                 <button
                   key={cat}
                   type="button"
-                  onClick={() =>
-                    setSelectedCategory((prev) => (prev === cat ? "" : cat))
-                  }
-                  className={`px-3 py-1.5 rounded-full text-sm border transition ${
+                  onClick={() => setSelectedCategory((prev) => (prev === cat ? "" : cat))}
+                  className={`flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 ${
                     isActive
-                      ? "bg-orange-500 text-white border-orange-500"
-                      : "bg-white text-gray-700 border-orange-200 hover:border-orange-400"
+                      ? "bg-orange-500 text-white shadow-md shadow-orange-500/25 scale-105"
+                      : "bg-white text-gray-700 hover:bg-orange-50 border border-orange-200/80"
                   }`}
                 >
-                  {cat}
+                  <span>{emoji}</span>
+                  <span>{cat}</span>
                 </button>
               );
             })}
           </div>
-          <div className="mt-4 flex flex-wrap gap-3 items-center">
-            <div className="flex-1 min-w-[200px]">
-              <input
-                type="text"
-                list="category-search-list"
-                value={categoryQuery}
-                onChange={(e) => setCategoryQuery(e.target.value)}
-                className="w-full px-4 py-2 border border-orange-200 rounded-full focus:outline-none focus:border-orange-500 transition"
-                placeholder="Cari kategori lain (misal: rempah, sayur)..."
-              />
-              <datalist id="category-search-list">
-                {categoryOptions.map((cat) => (
-                  <option key={cat} value={cat}></option>
-                ))}
-              </datalist>
-              <p className="text-xs text-gray-600 mt-1">
-                Jika kategori belum ada di pilihan, ketik saja — kami akan cari yang cocok.
-              </p>
-            </div>
+        </div>
+
+        {/* Section Header */}
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900">
+              {selectedCategory ? `Kategori: ${selectedCategory}` : "Daftar Produk Sembako"}
+            </h2>
+            <p className="text-xs text-gray-500">
+              Menampilkan {productsList.length} produk siap beli
+            </p>
           </div>
         </div>
-      </div>
-      {/* Produk grid */}
-      <div className="max-w-7xl mx-auto px-2 md:px-4 mt-10 mb-30">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-7">
-          {productsList.length === 0 && (
-            <div className="col-span-full text-center text-gray-400 py-10">
-              {searchQuery.trim() 
-                ? `Tidak ada produk ditemukan untuk "${searchQuery}"` 
-                : "Tidak ada produk ditemukan."}
-            </div>
-          )}
-          {productsList.map((product, idx) => (
-            <div
-              key={product.id || idx}
-              className="flex flex-col h-full bg-white border border-gray-200 rounded-2xl shadow-sm px-3.5 py-4 md:px-4 md:py-5 mb-3 transition hover:shadow-md cursor-pointer"
-              onClick={() => openModal(product)}
+
+        {/* Shimmer Loading Skeletons */}
+        {loading && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+              <div
+                key={n}
+                className="bg-white rounded-2xl p-3 border border-orange-50 shadow-sm animate-pulse flex flex-col justify-between"
+              >
+                <div className="w-full aspect-square bg-slate-100 rounded-xl mb-3"></div>
+                <div className="h-4 bg-slate-100 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-slate-100 rounded w-1/2 mb-3"></div>
+                <div className="h-8 bg-slate-100 rounded-lg"></div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && productsList.length === 0 && (
+          <div className="bg-white rounded-3xl p-12 text-center border border-dashed border-orange-200 my-6 shadow-sm">
+            <div className="text-5xl mb-3">🔍</div>
+            <h3 className="text-base font-bold text-gray-800">Tidak ada produk ditemukan</h3>
+            <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
+              {searchQuery
+                ? `Tidak ada produk dengan kata kunci "${searchQuery}". Coba kata kunci lain.`
+                : "Belum ada produk aktif pada kategori ini."}
+            </p>
+            <button
+              onClick={() => {
+                setSelectedCategory("");
+                setSearchQuery("");
+                setProductsList(allProducts);
+              }}
+              className="mt-4 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-semibold shadow-md shadow-orange-500/20 transition"
             >
-              <div className="flex justify-center items-start mb-3 min-h-[85px] md:min-h-[110px]">
-                <img
-                  src={product.img}
-                  alt={product.name}
-                  className="h-[70px] md:h-[90px] object-contain"
-                />
-              </div>
-              <div className="flex-grow flex flex-col justify-between">
-                <div className="line-clamp-2 font-semibold text-gray-900 text-xs md:text-base leading-snug mb-1 md:mb-1.5 truncate">
-                  {product.name}
+              Lihat Semua Produk
+            </button>
+          </div>
+        )}
+
+        {/* Product Grid */}
+        {!loading && productsList.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5">
+            {productsList.map((product) => (
+              <div
+                key={product.id}
+                className="group flex flex-col bg-white border border-orange-100/80 rounded-2xl p-3 sm:p-4 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative cursor-pointer overflow-hidden"
+                onClick={() => openModal(product)}
+              >
+                {/* Product Image Container */}
+                <div className="w-full aspect-square bg-gradient-to-b from-orange-50/50 to-slate-50/20 rounded-xl overflow-hidden mb-3 relative flex items-center justify-center p-2">
+                  <img
+                    src={product.img}
+                    alt={product.name}
+                    loading="lazy"
+                    className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      e.target.src = "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80";
+                    }}
+                  />
+                  {product.stock <= 10 && (
+                    <span className="absolute top-2 left-2 bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                      Sisa {product.stock}
+                    </span>
+                  )}
                 </div>
-                <div className="text-sm md:text-lg font-bold text-gray-900 mb-1 md:mb-2">
-                  {typeof product.price === "number"
-                    ? formatRupiah(product.price)
-                    : product.price}
+
+                {/* Info Container */}
+                <div className="flex-1 flex flex-col justify-between">
+                  <div>
+                    <span className="text-[10px] font-medium text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md mb-1 inline-block">
+                      {product.category || "Sembako"}
+                    </span>
+                    <h3 className="font-bold text-gray-900 text-xs sm:text-sm line-clamp-2 leading-snug group-hover:text-orange-600 transition-colors">
+                      {product.name}
+                    </h3>
+                  </div>
+
+                  <div className="mt-2.5 pt-2 border-t border-slate-100 flex flex-col gap-1.5">
+                    <div className="text-sm sm:text-base font-extrabold text-orange-600">
+                      {formatRupiah(product.price)}
+                    </div>
+                    <div className="flex items-center justify-between text-[11px] text-gray-400">
+                      <span className="truncate flex items-center gap-1">
+                        🏪 {product.store}
+                      </span>
+                      <span className="text-emerald-600 font-medium">Stok: {product.stock}</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addToCart(product, 1);
+                      }}
+                      className="mt-1 w-full py-1.5 px-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1"
+                    >
+                      <span>+ Keranjang</span>
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div className="text-xs md:text-sm text-gray-400 leading-tight truncate">{product.store}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-      {/* Modal */}
+            ))}
+          </div>
+        )}
+      </main>
+
+      {/* Product Detail Modal */}
       {showModal && selectedProduct && (
-        // Ganti modal jadi floating tanpa overlay background
-        <div className="fixed left-0 top-0 w-full h-full z-40 pointer-events-none">
-          <div
-            className="absolute pointer-events-auto left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-xl p-6 md:p-7 max-w-xs w-full relative"
-            style={{
-              boxShadow:
-                "0 4px 24px 0 rgba(55, 51, 48, 0.13), 0 2px 8px 0 rgba(180,131,91,0.12)",
-            }}
-          >
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 shadow-2xl relative animate-scaleUp overflow-hidden">
             <button
               onClick={closeModal}
-              className="absolute top-2 right-3 text-gray-400 hover:text-gray-600 text-2xl font-bold focus:outline-none"
-              aria-label="Tutup"
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center text-lg font-bold transition"
             >
               &times;
             </button>
-            <div className="flex flex-col items-center px-2">
+
+            <div className="w-full aspect-square bg-orange-50/60 rounded-2xl overflow-hidden mb-4 p-2 flex items-center justify-center">
               <img
                 src={selectedProduct.img}
                 alt={selectedProduct.name}
-                className="h-20 md:h-24 object-contain mb-3 md:mb-4"
+                className="w-full h-full object-cover rounded-xl"
               />
-              <h2 className="text-base md:text-lg font-bold mb-1.5 md:mb-2 text-center">{selectedProduct.name}</h2>
-              <div className="text-gray-700 text-xs md:text-sm mb-1.5 md:mb-2 text-center">
-                {selectedProduct.description || selectedProduct.desc || ''}
-              </div>
-              <div className="text-gray-900 font-semibold text-xs md:text-base mb-1.5 md:mb-2">
-                {dynamicTotalPrice}
-              </div>
-              <div className="text-gray-500 text-xs md:text-sm mb-1.5 md:mb-2">
-                Sisa Stock: <span className="font-semibold">{selectedProduct.stock}</span>
-              </div>
-              {/* Selector jumlah produk */}
-              <div className="mb-3 md:mb-5 flex items-center justify-center gap-2">
-                <button
-                  type="button"
-                  className="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 text-base md:text-lg font-bold"
-                  onClick={decQty}
-                  disabled={quantity <= 1}
-                  tabIndex="0"
-                >-</button>
-                <input
-                  type="number"
-                  className="w-12 md:w-14 text-center border border-gray-300 rounded py-0.5"
-                  value={quantity}
-                  min={1}
-                  max={selectedProduct.stock}
-                  onChange={handleQuantityChange}
-                />
-                <button
-                  type="button"
-                  className="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 text-base md:text-lg font-bold"
-                  onClick={incQty}
-                  disabled={quantity >= selectedProduct.stock}
-                  tabIndex="0"
-                >+</button>
-              </div>
-              <button
-                className="px-6 md:px-8 py-2 md:py-2.5 bg-[#BF4413] text-white rounded-lg hover:bg-[#a5380f] transition font-semibold text-sm md:text-base w-full"
-                onClick={() => addToCart(selectedProduct)}
-                disabled={selectedProduct.stock < 1 || quantity < 1}
-              >
-                {selectedProduct.stock > 0 ? "Tambah ke Keranjang" : "Stok Habis"}
-              </button>
             </div>
+
+            <span className="text-xs font-semibold text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-md inline-block mb-1.5">
+              {selectedProduct.category || "Sembako"}
+            </span>
+
+            <h2 className="text-base sm:text-lg font-bold text-gray-900 leading-snug">
+              {selectedProduct.name}
+            </h2>
+
+            <p className="text-xs text-gray-500 mt-1 leading-relaxed line-clamp-3">
+              {selectedProduct.description || "Produk sembako berkualitas, segar dan siap kirim ke alamat Anda."}
+            </p>
+
+            <div className="mt-3 flex items-center justify-between text-xs text-gray-500 border-y border-gray-100 py-2">
+              <span>🏪 {selectedProduct.store}</span>
+              <span className="text-emerald-600 font-semibold">Tersedia: {selectedProduct.stock} pcs</span>
+            </div>
+
+            <div className="mt-4 flex items-center justify-between">
+              <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  className="w-9 h-9 flex items-center justify-center text-gray-600 hover:bg-gray-100 font-bold"
+                >
+                  -
+                </button>
+                <span className="w-10 text-center font-bold text-sm text-gray-800">
+                  {quantity}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.min(selectedProduct.stock, q + 1))}
+                  className="w-9 h-9 flex items-center justify-center text-gray-600 hover:bg-gray-100 font-bold"
+                >
+                  +
+                </button>
+              </div>
+
+              <div className="text-right">
+                <div className="text-[10px] text-gray-400">Total Harga</div>
+                <div className="text-lg font-extrabold text-orange-600">
+                  {formatRupiah(parsePrice(selectedProduct.price) * quantity)}
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              disabled={addingToCart}
+              onClick={() => addToCart(selectedProduct, quantity)}
+              className="mt-5 w-full py-3 bg-orange-500 hover:bg-orange-600 active:scale-[0.98] text-white font-bold rounded-2xl shadow-lg shadow-orange-500/30 text-sm transition flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              {addingToCart ? (
+                <span>Menambahkan...</span>
+              ) : (
+                <>
+                  <span>🛒</span>
+                  <span>Masukkan ke Keranjang</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
       )}
+
+      {/* Bottom Floating Navigation */}
       <BottomNavbar />
     </div>
   );
