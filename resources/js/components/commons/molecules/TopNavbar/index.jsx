@@ -426,28 +426,29 @@ const TopNavbar = ({
       {/* Modal Profil */}
       {showProfile && (
         <div
-          className="fixed inset-0 bg-black/50 z-[1000] flex items-center justify-center p-5"
+          className="fixed inset-0 bg-black/50 z-[1000] flex items-center justify-center p-4 sm:p-6"
           onClick={handleCloseProfile}
         >
           <div
-            className="bg-white rounded-2xl p-6 max-w-[400px] w-full shadow-lg"
+            className="bg-white rounded-2xl p-6 max-w-[420px] w-full shadow-2xl max-h-[90vh] overflow-y-auto flex flex-col"
             onClick={e => e.stopPropagation()}
           >
-            <div className="flex justify-between items-center mb-5">
+            <div className="flex justify-between items-center mb-5 pb-3 border-b border-gray-100">
               <h2 className="text-[#E65100] m-0 text-xl font-bold">
                 Profil Saya
               </h2>
               <button
                 onClick={handleCloseProfile}
-                className="bg-transparent border-none text-2xl cursor-pointer text-[#999] p-0 w-[30px] h-[30px] flex items-center justify-center"
+                className="bg-gray-100 hover:bg-gray-200 rounded-full border-none text-xl cursor-pointer text-[#666] p-0 w-[32px] h-[32px] flex items-center justify-center transition"
+                aria-label="Tutup"
               >
                 ×
               </button>
             </div>
 
             <div className="text-center mb-6">
-              <div className="w-[100px] h-[100px] rounded-full bg-[#FFE5D0] flex items-center justify-center mx-auto mb-4">
-                <svg width="50" height="50" viewBox="0 0 24 24" fill="none">
+              <div className="w-[88px] h-[88px] rounded-full bg-[#FFE5D0] flex items-center justify-center mx-auto mb-3 shadow-inner">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21"
                     stroke="#E65100"
@@ -466,85 +467,93 @@ const TopNavbar = ({
                   />
                 </svg>
               </div>
-              <h3 className="text-[#333] m-0 mb-2 text-lg font-semibold">
+              <h3 className="text-[#333] m-0 mb-1 text-lg font-bold">
                 {userData.name || "Pengguna"}
               </h3>
-              <p className="text-[#999] m-0 text-sm">Anggota MySembako</p>
+              <p className="text-gray-500 m-0 text-sm">
+                {userData.email || "Anggota MySembako"}
+              </p>
             </div>
 
-            <div className="mb-4 space-y-4">
+            <div className="mb-5 space-y-4">
               <div>
-                <label className="block mb-2 text-[#333] text-sm font-medium">
+                <label className="block mb-1.5 text-[#333] text-sm font-semibold">
                   Nama
                 </label>
                 <input
                   type="text"
                   value={formData.name || ""}
                   onChange={e => handleProfileChange("name", e.target.value)}
-                  className="w-full p-3 border border-[#ddd] rounded-lg text-sm outline-none"
+                  className="w-full p-3 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#E65100] transition"
                   placeholder="Masukkan nama Anda"
                 />
               </div>
               <div>
-                <label className="block mb-2 text-[#333] text-sm font-medium">
+                <label className="block mb-1.5 text-[#333] text-sm font-semibold">
                   Email
                 </label>
                 <input
                   type="email"
                   value={formData.email || ""}
                   onChange={e => handleProfileChange("email", e.target.value)}
-                  className="w-full p-3 border border-[#ddd] rounded-lg text-sm outline-none"
+                  className="w-full p-3 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#E65100] transition"
                   placeholder="Masukkan email Anda"
                 />
               </div>
               <div>
-                <label className="block mb-2 text-[#333] text-sm font-medium">
+                <label className="block mb-1.5 text-[#333] text-sm font-semibold">
                   Nomor Telepon
                 </label>
                 <input
                   type="text"
                   value={formData.phone || ""}
                   onChange={e => handleProfileChange("phone", e.target.value)}
-                  className="w-full p-3 border border-[#ddd] rounded-lg text-sm outline-none"
+                  className="w-full p-3 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#E65100] transition"
                   placeholder="Masukkan nomor telepon"
                 />
               </div>
               <div>
-                <label className="block mb-2 text-[#333] text-sm font-medium">
+                <label className="block mb-1.5 text-[#333] text-sm font-semibold">
                   Kota (dibaca otomatis)
                 </label>
                 <input
                   type="text"
                   value={userData.location || ""}
                   readOnly
-                  className="w-full p-3 border border-[#ddd] rounded-lg text-sm outline-none bg-gray-50"
+                  className="w-full p-3 border border-[#ddd] rounded-xl text-sm outline-none bg-gray-50 text-gray-700"
                   placeholder="Belum ada lokasi"
                 />
                 <button
                   type="button"
                   onClick={handleActivateLocation}
-                  className="mt-2 w-full p-3 bg-[#E65100] text-white border-none rounded-lg text-base font-bold cursor-pointer disabled:opacity-70"
+                  className="mt-2 w-full p-2.5 bg-orange-100 text-[#E65100] border border-orange-200 rounded-xl text-sm font-semibold hover:bg-orange-200 cursor-pointer transition disabled:opacity-70"
                   disabled={savingLocation}
                 >
-                  {savingLocation ? "Mengambil lokasi..." : "Aktifkan lokasi"}
+                  {savingLocation ? "Mengambil lokasi..." : "📍 Aktifkan Lokasi Saya"}
                 </button>
               </div>
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 pt-3 border-t border-gray-100">
               <button
+                type="button"
                 onClick={handleSaveProfile}
-                className="w-full p-3 bg-[#E65100] text-white border-none rounded-lg text-base font-bold cursor-pointer disabled:opacity-70"
+                className="w-full p-3 bg-[#E65100] hover:bg-[#d44800] text-white border-none rounded-xl text-base font-bold cursor-pointer transition shadow-sm disabled:opacity-70"
                 disabled={savingProfile}
               >
                 {savingProfile ? "Menyimpan..." : "Simpan Profil"}
               </button>
               <button
+                type="button"
                 onClick={handleLogout}
-                className="w-full p-3 bg-red-500 hover:bg-red-600 text-white border-none rounded-lg text-base font-bold cursor-pointer mt-2 transition"
-                style={{ marginTop: 8 }}
+                className="w-full p-3 bg-red-600 hover:bg-red-700 text-white border-none rounded-xl text-base font-bold cursor-pointer transition shadow-sm flex items-center justify-center gap-2"
               >
-                Logout
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Keluar / Logout
               </button>
             </div>
           </div>

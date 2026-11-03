@@ -30,9 +30,16 @@ Route::post('/register-admin', [AuthPagesController::class, 'submitRegisterAdmin
 
 Route::post('/login', [AuthPagesController::class, 'submitLogin'])->name('login.submit');
 
-Route::post('/logout', function () {
-    \Illuminate\Support\Facades\Auth::logout();
-    return redirect()->route('home')->with('success', 'Anda telah logout.');
+Route::post('/logout', function (\Illuminate\Http\Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    if ($request->wantsJson() || $request->ajax()) {
+        return response()->json(['status' => 'success', 'message' => 'Anda telah logout.']);
+    }
+
+    return redirect()->route('login')->with('success', 'Anda telah logout.');
 })->name('logout');
 
 Route::get('/index', [AuthPagesController::class, 'index'])->name('index');

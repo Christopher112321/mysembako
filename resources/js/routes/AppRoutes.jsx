@@ -6,6 +6,7 @@ import CartPage from '../pages/CartPage';
 import CheckoutPage from '../pages/CheckoutPage';
 import ReceiptPage from '../pages/ReceiptPage';
 import LocationPage from '../pages/LocationPage';
+import ProfilePage from '../pages/ProfilePage';
 
 console.log('AppRoutes loaded');
 
@@ -84,10 +85,6 @@ const AppRoutes = [
     element: <LoginRedirect />,
   },
   {
-    path: '*',
-    element: <NotFoundRedirect />,
-  },
-  {
     path: '/cart',
     element: <CartPage />,
   },
@@ -103,7 +100,14 @@ const AppRoutes = [
     path: '/location',
     element: <LocationPage />,
   },
-  // Tambahkan route lain di sini jika ada halaman tambahan, misal Register, Dashboard, dsb.
+  {
+    path: '/profile',
+    element: <ProfilePage />,
+  },
+  {
+    path: '*',
+    element: <NotFoundRedirect />,
+  },
 ];
 
 export default AppRoutes;
