@@ -60,10 +60,31 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? [
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA') ?: (env('DB_SSL', false) ? true : null),
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => (function() {
+                    $ca = env('MYSQL_ATTR_SSL_CA');
+                    if ($ca && is_string($ca) && file_exists($ca)) {
+                        return $ca;
+                    }
+                    $ini = ini_get('openssl.cafile') ?: ini_get('curl.cainfo');
+                    if ($ini && file_exists($ini)) {
+                        return $ini;
+                    }
+                    $systemPaths = [
+                        '/etc/pki/tls/certs/ca-bundle.crt',
+                        '/etc/ssl/certs/ca-certificates.crt',
+                        '/etc/ssl/cert.pem',
+                        'C:\\laragon\\etc\\ssl\\cacert.pem',
+                    ];
+                    foreach ($systemPaths as $path) {
+                        if (file_exists($path)) {
+                            return $path;
+                        }
+                    }
+                    return null;
+                })(),
                 PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => env('DB_SSL_VERIFY', false),
-            ] : [],
+            ]) : [],
         ],
 
         'mariadb' => [
@@ -81,10 +102,31 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? [
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA') ?: (env('DB_SSL', false) ? true : null),
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => (function() {
+                    $ca = env('MYSQL_ATTR_SSL_CA');
+                    if ($ca && is_string($ca) && file_exists($ca)) {
+                        return $ca;
+                    }
+                    $ini = ini_get('openssl.cafile') ?: ini_get('curl.cainfo');
+                    if ($ini && file_exists($ini)) {
+                        return $ini;
+                    }
+                    $systemPaths = [
+                        '/etc/pki/tls/certs/ca-bundle.crt',
+                        '/etc/ssl/certs/ca-certificates.crt',
+                        '/etc/ssl/cert.pem',
+                        'C:\\laragon\\etc\\ssl\\cacert.pem',
+                    ];
+                    foreach ($systemPaths as $path) {
+                        if (file_exists($path)) {
+                            return $path;
+                        }
+                    }
+                    return null;
+                })(),
                 PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => env('DB_SSL_VERIFY', false),
-            ] : [],
+            ]) : [],
         ],
 
         'pgsql' => [

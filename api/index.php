@@ -93,9 +93,9 @@ if (!getenv('DB_HOST') || getenv('DB_HOST') === '127.0.0.1') {
     $_ENV['DB_PASSWORD'] = 'RRpGsiI2M4FDVXMO';
     $_SERVER['DB_PASSWORD'] = 'RRpGsiI2M4FDVXMO';
 
-    putenv('MYSQL_ATTR_SSL_CA=true');
-    $_ENV['MYSQL_ATTR_SSL_CA'] = 'true';
-    $_SERVER['MYSQL_ATTR_SSL_CA'] = 'true';
+    putenv('DB_SSL=true');
+    $_ENV['DB_SSL'] = 'true';
+    $_SERVER['DB_SSL'] = 'true';
 }
 
 // Force HTTPS detection for Vercel
