@@ -54,6 +54,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Beras premium kualitas terbaik, cocok untuk konsumsi sehari-hari.',
                 'status' => 'aktif',
                 'category' => 'Beras',
+                'image' => 'img/products/beras-premium-5kg.jpg',
             ],
             [
                 'name' => 'Minyak Goreng Bimoli 2L',
@@ -62,6 +63,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Minyak goreng berkualitas tinggi, bebas kolesterol.',
                 'status' => 'aktif',
                 'category' => 'Minyak Goreng',
+                'image' => 'img/products/minyak-goreng-bimoli-2l.jpg',
             ],
             [
                 'name' => 'Gula Pasir Gulaku 1kg',
@@ -70,6 +72,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Gula pasir putih halus, cocok untuk berbagai keperluan.',
                 'status' => 'aktif',
                 'category' => 'Gula Pasir',
+                'image' => 'img/products/gula-pasir-gulaku-1kg.jpg',
             ],
             [
                 'name' => 'Telur Ayam Ras 1kg',
@@ -78,6 +81,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Telur ayam ras segar, kualitas terbaik.',
                 'status' => 'aktif',
                 'category' => 'Telur',
+                'image' => 'img/products/telur-ayam-ras-1kg.jpg',
             ],
             [
                 'name' => 'Bumbu Dapur Komplet',
@@ -86,6 +90,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Paket bumbu dapur lengkap: garam, merica, ketumbar, dll.',
                 'status' => 'aktif',
                 'category' => 'Bumbu Dapur',
+                'image' => 'img/products/bumbu-dapur-komplet.jpg',
             ],
             [
                 'name' => 'Mie Indomie Goreng 1 Dus',
@@ -94,6 +99,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Mie instan Indomie goreng, 1 dus isi 40 bungkus.',
                 'status' => 'aktif',
                 'category' => 'Mie & Pasta',
+                'image' => 'img/products/mie-indomie-goreng-1-dus.jpg',
             ],
             [
                 'name' => 'Kopi Kapal Api 200gr',
@@ -102,6 +108,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Kopi bubuk Kapal Api, rasa khas nusantara.',
                 'status' => 'aktif',
                 'category' => 'Kopi & Teh',
+                'image' => 'img/products/kopi-kapal-api-200gr.jpg',
             ],
             [
                 'name' => 'Susu UHT Ultra Milk 1L',
@@ -110,6 +117,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Susu UHT segar, kaya kalsium dan vitamin.',
                 'status' => 'aktif',
                 'category' => 'Susu & Olahan',
+                'image' => 'img/products/susu-uht-ultra-milk-1l.jpg',
             ],
         ];
 
@@ -122,6 +130,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Beras IR 64 kualitas premium, pulen dan enak.',
                 'status' => 'aktif',
                 'category' => 'Beras',
+                'image' => 'img/products/beras-ir-64-10kg.jpg',
             ],
             [
                 'name' => 'Minyak Goreng Filma 1L',
@@ -130,6 +139,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Minyak goreng Filma, praktis dan ekonomis.',
                 'status' => 'aktif',
                 'category' => 'Minyak Goreng',
+                'image' => 'img/products/minyak-goreng-filma-1l.jpg',
             ],
             [
                 'name' => 'Gula Pasir Rose Brand 1kg',
@@ -138,6 +148,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Gula pasir Rose Brand, manis alami.',
                 'status' => 'aktif',
                 'category' => 'Gula Pasir',
+                'image' => 'img/products/gula-pasir-rose-brand-1kg.jpg',
             ],
             [
                 'name' => 'Telur Ayam Kampung 1kg',
@@ -146,6 +157,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Telur ayam kampung organik, lebih sehat dan bergizi.',
                 'status' => 'aktif',
                 'category' => 'Telur',
+                'image' => 'img/products/telur-ayam-kampung-1kg.jpg',
             ],
             [
                 'name' => 'Bumbu Racik Ayam Goreng',
@@ -154,6 +166,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Bumbu instan untuk ayam goreng, praktis dan lezat.',
                 'status' => 'aktif',
                 'category' => 'Bumbu Dapur',
+                'image' => 'img/products/bumbu-racik-ayam-goreng.jpg',
             ],
             [
                 'name' => 'Mie Sedap Goreng 1 Dus',
@@ -162,6 +175,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Mie instan Sedap goreng, 1 dus isi 40 bungkus.',
                 'status' => 'aktif',
                 'category' => 'Mie & Pasta',
+                'image' => 'img/products/mie-sedap-goreng-1-dus.jpg',
             ],
             [
                 'name' => 'Teh Botol Sosro 1 Dus',
@@ -170,6 +184,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Teh botol Sosro, 1 dus isi 24 botol.',
                 'status' => 'aktif',
                 'category' => 'Kopi & Teh',
+                'image' => 'img/products/teh-botol-sosro-1-dus.jpg',
             ],
             [
                 'name' => 'Susu Kental Manis Frisian Flag',
@@ -178,6 +193,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Susu kental manis Frisian Flag, 1 kaleng 370gr.',
                 'status' => 'aktif',
                 'category' => 'Susu & Olahan',
+                'image' => 'img/products/susu-kental-manis-frisian-flag.jpg',
             ],
             [
                 'name' => 'Air Minum Galon 19L',
@@ -186,6 +202,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Air minum galon isi ulang, bersih dan sehat.',
                 'status' => 'aktif',
                 'category' => 'Air Minum / Galon',
+                'image' => 'img/products/air-minum-galon-19l.jpg',
             ],
             [
                 'name' => 'Gas LPG 3kg',
@@ -194,6 +211,7 @@ class StoreSeeder extends Seeder
                 'description' => 'Gas LPG 3kg, aman dan praktis.',
                 'status' => 'aktif',
                 'category' => 'Gas LPG',
+                'image' => 'img/products/gas-lpg-3kg.jpg',
             ],
         ];
 
@@ -211,6 +229,7 @@ class StoreSeeder extends Seeder
                     'price' => $productData['price'],
                     'stock' => $productData['stock'],
                     'description' => $productData['description'],
+                    'image' => $productData['image'] ?? null,
                     'status' => $productData['status'],
                     'category_id' => $category ? $category->id : null,
                 ]
@@ -231,6 +250,7 @@ class StoreSeeder extends Seeder
                     'price' => $productData['price'],
                     'stock' => $productData['stock'],
                     'description' => $productData['description'],
+                    'image' => $productData['image'] ?? null,
                     'status' => $productData['status'],
                     'category_id' => $category ? $category->id : null,
                 ]
@@ -282,4 +302,3 @@ class StoreSeeder extends Seeder
         return $categories;
     }
 }
-

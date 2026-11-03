@@ -27,13 +27,21 @@ class CartController extends Controller
                 $product = $cartItem->product;
                 
                 // Format gambar - prioritaskan ProductImage, jika tidak ada gunakan image dari product
-                $imageUrl = null;
-                if ($product->images && $product->images->count() > 0) {
-                    $imageUrl = asset('storage/' . $product->images->first()->image_path);
-                } elseif ($product->image) {
-                    $imageUrl = asset('storage/' . $product->image);
-                } else {
-                    $imageUrl = 'https://via.placeholder.com/150?text=No+Image';
+                $imageUrl = 'https://via.placeholder.com/150?text=No+Image';
+                $rawImg = ($product->images && $product->images->count() > 0)
+                    ? $product->images->first()->image_path
+                    : $product->image;
+
+                if ($rawImg) {
+                    if (\Illuminate\Support\Str::startsWith($rawImg, ['http://', 'https://'])) {
+                        $imageUrl = $rawImg;
+                    } elseif (\Illuminate\Support\Str::startsWith($rawImg, ['img/', '/img/'])) {
+                        $imageUrl = asset(ltrim($rawImg, '/'));
+                    } elseif (\Illuminate\Support\Str::startsWith($rawImg, ['storage/', '/storage/'])) {
+                        $imageUrl = asset(ltrim($rawImg, '/'));
+                    } else {
+                        $imageUrl = asset('storage/' . $rawImg);
+                    }
                 }
 
                 return [

@@ -220,10 +220,19 @@ class ProductController extends Controller
             ->with(['owner', 'category'])
             ->get()
             ->map(function ($product) {
-                // Format gambar - jika ada image, gunakan full URL, jika tidak gunakan placeholder
-                $imageUrl = $product->image 
-                    ? asset('storage/' . $product->image) 
-                    : 'https://via.placeholder.com/150?text=No+Image';
+                // Format gambar - mendukung path http, img/products, maupun storage
+                $imageUrl = 'https://via.placeholder.com/150?text=No+Image';
+                if ($product->image) {
+                    if (Str::startsWith($product->image, ['http://', 'https://'])) {
+                        $imageUrl = $product->image;
+                    } elseif (Str::startsWith($product->image, ['img/', '/img/'])) {
+                        $imageUrl = asset(ltrim($product->image, '/'));
+                    } elseif (Str::startsWith($product->image, ['storage/', '/storage/'])) {
+                        $imageUrl = asset(ltrim($product->image, '/'));
+                    } else {
+                        $imageUrl = asset('storage/' . $product->image);
+                    }
+                }
                 
                 return [
                     'id' => $product->id,

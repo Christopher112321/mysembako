@@ -12,7 +12,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div>
             @if($product->image)
-                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full rounded-lg">
+                <img src="{{ \Illuminate\Support\Str::startsWith($product->image, ['http://', 'https://', 'img/', '/img/']) ? asset(ltrim($product->image, '/')) : asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full rounded-lg">
             @else
                 <div class="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">No Image</div>
             @endif

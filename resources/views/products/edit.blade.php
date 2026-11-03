@@ -149,7 +149,7 @@
                     
                     @if($product->image)
                         <div class="mb-4 flex items-start gap-4">
-                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-40 h-40 object-cover rounded-lg border-2 border-gray-200">
+                            <img src="{{ \Illuminate\Support\Str::startsWith($product->image, ['http://', 'https://', 'img/', '/img/']) ? asset(ltrim($product->image, '/')) : asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-40 h-40 object-cover rounded-lg border-2 border-gray-200">
                             <div class="flex-1">
                                 <p class="text-sm font-semibold text-gray-700 mb-1">Foto saat ini</p>
                                 <p class="text-sm text-gray-500">Upload foto baru untuk mengganti</p>
